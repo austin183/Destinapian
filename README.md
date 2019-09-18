@@ -33,8 +33,6 @@ npm start
 
 You should see some log messages indicating that the server downloaded the manifest and started listening on port 3000
 
-(ToDo to fix the missing contents folder and waiting for the database to download and expand before newing up the database model.)
-
 Verify you can hit the end points by visiting http://localhost:3000/api-docs and choosing an end point to test.  The one that does not require any input is /Destiny2/Manifest so it is the most recommended to start with.  Others require some knowledge of the Bungie APIs.  Please see http://destinydevs.github.io/BungieNetPlatform/docs/Getting-Started for more information.
 
 

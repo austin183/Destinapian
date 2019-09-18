@@ -8,12 +8,3 @@ Angular
 NodeJs
 - Unit Test NodeJs server
 - enable debug flag (nodejs)
-
-
-For Git posting
-- Create Readme
-- Fix issues with initial load
--- Document the need to run npm install
--- Fix issue where the contents file does not exist on first run
---- If contents folder does not exist, create it
---- Add promise around updating the manifest database before trying to new up the manifestDatabaseModel.
