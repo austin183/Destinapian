@@ -1,0 +1,14 @@
+Angular
+- Organize Angular App
+- Unit Test Angular
+- enable debug flag (angular)
+- explore charting libaries (table of data to chart)
+- enable paging
+
+NodeJs
+- Unit Test NodeJs server
+- enable debug flag (nodejs)
+
+
+For Git posting
+- Create Readme

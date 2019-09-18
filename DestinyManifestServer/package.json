@@ -1,0 +1,28 @@
+{
+  "name": "destinymanifestserver",
+  "version": "1.0.0",
+  "description": "Provides api to query sqlite manifest database",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"NoTestsYet\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "author": "austin",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "nodemon": "^1.19.2",
+    "sinon": "^7.4.2",
+    "swagger-jsdoc": "^3.4.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mocha": "^6.2.0",
+    "object-hash": "^1.3.1",
+    "request": "^2.88.0",
+    "sqlite3": "^4.1.0",
+    "swagger-ui-express": "^4.1.0",
+    "unzipper": "^0.10.5"
+  }
+}
