@@ -1,6 +1,8 @@
 # Destinapian
 A NodeJS Server and Angular App combination to explore Bungie's API for Destiny 2
 
+More information can be found for the API at https://bungie-net.github.io/multi/index.html and http://destinydevs.github.io/BungieNetPlatform/docs/Getting-Started
+
 # Getting Started
 This ReadMe assumes you have Node installed and have access to npm.
 If that is not true, please install the missing pieces from https://nodejs.org/en/
