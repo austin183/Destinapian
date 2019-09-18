@@ -26,7 +26,9 @@ Navigate to the Destinapian folder
 Now run the following commands
 
 cd DestinyManifestServer
+
 (sudo) npm install
+
 npm start
 
 You should see some log messages indicating that the server downloaded the manifest and started listening on port 3000
@@ -41,7 +43,9 @@ Navigate to the Destinapian folder
 Now run the following commands
 
 cd DestinySampleApp
+
 (sudo) npm install
+
 npm start
 
 Verify you can use the website by visiting http://localhost:4200 .  If everything is hooked up correctly, you should see the manifest version appear a few moments after the page loads up.  That means that the angular app can talk to the server hosted on port 3000.  If you submit a Profile Name and Network type, the character drop down should load with each character's class name.  That means the server has access to the manifest database.  You are now ready to change stuff and break things!
