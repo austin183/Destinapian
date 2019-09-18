@@ -26,6 +26,14 @@ const options = {
 
 const specs = swaggerJsdoc(options);
 
+
+//update manifest if necessary
+console.log("Updating Manifest");
+var manifestModel = require('./api/models/manifestModel');
+manifestModel.updateManifest();
+var latestManifestPath = manifestModel.getLatestManifestDatabase();
+console.log('latest manifest: ' + latestManifestPath);
+
 //register routes
 console.log("Registering routes");
 var routes = require('./api/routes/manifestRoutes');
@@ -34,12 +42,6 @@ routes(app);
 platformRoutes(app);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-//update manifest if necessary
-console.log("Updating Manifest");
-var manifestModel = require('./api/models/manifestModel');
-manifestModel.updateManifest();
-var latestManifestPath = manifestModel.getLatestManifestDatabase();
-console.log('latest manifest: ' + latestManifestPath);
 //start listening for requests
 app.listen(port);
 

@@ -7,6 +7,9 @@ const zlib = require('zlib');
 const unzipper = require('unzipper');
 const platformOptionsBuilder = require('../models/platformRequestOptionsBuilder');
 const contentsPathComponent = "./contents";
+if (!fs.existsSync(contentsPathComponent)){
+    fs.mkdirSync(contentsPathComponent);
+}
 
 function getContentFileName(jData){
 	var currentContentPath = jData.Response.mobileWorldContentPaths.en;
