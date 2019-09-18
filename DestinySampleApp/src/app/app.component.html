@@ -1,0 +1,43 @@
+<h1>Something is here now </h1>
+
+<p id="manifest">Manifest Version: {{manifestVersion}}</p>
+
+<form [formGroup]="getInfoForm">
+  <input type = "text" 
+        name = "profileName" 
+        placeholder = "profileName" 
+        formControlName="profileName" 
+        #profileName>
+  <br/>
+  <select formControlName="membershipTypeDropDown" #membershipTypeDropDown>
+    <option *ngFor="let type of membershipTypesArray" [value]="type.value">{{type.key}}</option>
+  </select>
+  <br />
+  <input type = "submit" 
+          value = "submit" 
+          (click) = "onClickSubmit(profileName.value, membershipTypeDropDown.value)" >
+  <br />
+  <select formControlName="characterDropDown" #characterDropDown (change)='onCharacterSelected(characterDropDown.value)'>
+    <option *ngFor="let character of characterInfoArray" [value]="character.characterId">{{character.class}}</option>
+  </select>
+  <select formControlName="gameModeDropDown" #gameModeDropDown>
+    <option *ngFor="let gameMode of gameModesArray" [value]="gameMode.value">{{gameMode.key}}</option>
+  </select>
+  <br />
+  <input type="submit" value="getActivity" (click) = "onClickGetActivity(characterDropDown.value, gameModeDropDown.value)" />
+</form>
+<p>
+  MembershipID: {{membershipId}}<br />
+  Race: {{characterRace}}<br />
+  Description: {{characterRaceDescription}}<br />
+  Class: {{characterClass}}<br />
+  Gender: {{characterGender}}
+</p>
+
+<ul>
+  <li *ngFor="let activity of activityList; let i = index">
+    {{i}} | {{activity.period}} | {{activity.name}} | {{activity.efficiency}} | {{activity.standing}}
+  </li>
+</ul>
+
+<router-outlet></router-outlet>

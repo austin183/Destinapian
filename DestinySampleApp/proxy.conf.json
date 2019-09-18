@@ -1,0 +1,6 @@
+{
+  "/platform": {
+    "target": "https://www.bungie.net",
+    "secure": true
+  }
+}
