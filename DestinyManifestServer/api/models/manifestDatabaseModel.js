@@ -9,7 +9,7 @@ function getDatabase() {
 			return console.error(err.message);
 		}
 	});
-}
+};
 
 function getInitialDatabasePath(){
 	return manifest.getLatestManifestDatabase();
