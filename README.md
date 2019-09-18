@@ -18,10 +18,8 @@ The contents of the file should look something like:
 -------------------------------
 
 This project has two components, both need the same things to get going:
-1) (sudo) npm install
-This will install the necessary npm modules for components
-2) npm start
-This command can be used to start the server and the angular app, depending on which folder you are in at the time.
+1) (sudo) npm install -- This will install the necessary npm modules for components
+2) npm start -- This command can be used to start the server and the angular app, depending on which folder you are in at the time.
 
 Open a terminal or command prompt
 Navigate to the Destinapian folder
