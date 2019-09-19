@@ -11,7 +11,9 @@
   "license": "ISC",
   "devDependencies": {
     "chai": "^4.2.0",
+    "express-pino-logger": "^4.0.0",
     "nodemon": "^1.19.2",
+    "pino": "^5.13.3",
     "rewire": "^4.0.1",
     "sinon": "^7.4.2",
     "swagger-jsdoc": "^3.4.0"
