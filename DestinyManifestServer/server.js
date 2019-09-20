@@ -2,13 +2,12 @@
 console.log("Bootstrapping Express");
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
-const pinoExpress = require('express-pino-logger');
-const logger = require('pino')();
+const logger = require('./utilities/logger').logger;
 var express = require('express'),
   app = express(),
   port = process.env.PORT || 3000,
   bodyParser = require('body-parser');
-//app.use(pinoExpress);
+  
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 
