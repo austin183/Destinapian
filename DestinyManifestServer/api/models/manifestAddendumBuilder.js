@@ -2,6 +2,11 @@
 
 const manifestDatabaseModel = require('../models/manifestDatabaseModel');
 const utilityModel = require('./utilityModel');
+const logger = require('../../utilities/logger').logger;
+
+function getLogger(){
+	return logger;
+};
 
 function translateHash(hash){
 	return utilityModel.translateHash(hash);
@@ -9,7 +14,7 @@ function translateHash(hash){
 
 function handleError(err, reject){
 	if(err){
-		console.error(err);
+		getLogger().error(err);
 		reject();
 	}
 };

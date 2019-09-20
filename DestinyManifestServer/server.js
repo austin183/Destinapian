@@ -15,7 +15,6 @@ app.use(bodyParser.json());
 logger.info('Testing out logging');
 
 //configure swagger
-console.log('Configuring Swagger');
 logger.info('Configuring Swagger');
 const options = {
   swaggerDefinition: {
@@ -34,15 +33,13 @@ const specs = swaggerJsdoc(options);
 
 
 //update manifest if necessary
-console.log("Updating Manifest");
 logger.info("Updating Manifest");
 var manifestModel = require('./api/models/manifestModel');
 manifestModel.updateManifest();
 var latestManifestPath = manifestModel.getLatestManifestDatabase();
-console.log('latest manifest: ' + latestManifestPath);
+logger.info('latest manifest: ' + latestManifestPath);
 
 //register routes
-console.log("Registering routes");
 logger.info("Registering routes");
 var routes = require('./api/routes/manifestRoutes');
 var platformRoutes = require('./api/routes/platformRoutes');
@@ -54,4 +51,3 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.listen(port);
 
 logger.info('Destiny Manifest RESTful API server started on: ' + port);
-console.log('Destiny Manifest RESTful API server started on: ' + port);

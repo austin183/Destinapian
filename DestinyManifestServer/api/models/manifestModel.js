@@ -11,16 +11,27 @@ if (!fs.existsSync(contentsPathComponent)){
     fs.mkdirSync(contentsPathComponent);
 }
 
+const singleLogger = require('../../utilities/logger').logger;
+
+function getLogger(){
+	return singleLogger;
+};
+
+function getRequest(){
+	return request;
+};
+
 function getContentFileName(jData){
 	var currentContentPath = jData.Response.mobileWorldContentPaths.en;
 	var fileName = path.basename(currentContentPath);
 	return {
 		fileName: fileName,
 		contentPath: currentContentPath
-	}
+	};
 };
 
 function downloadContent(path, fileName){
+	var logger = getLogger();
 	if(!fs.existsSync('./' + fileName + '.zip')){
 		var file = fs.createWriteStream(fileName + '.zip');
 		let stream = request({
@@ -40,15 +51,15 @@ function downloadContent(path, fileName){
 			})
 			.pipe(file)
 			.on('finish', () => {
-				console.log(`The file is finished downloading.  Performing extraction`);
+				logger.info(`The file is finished downloading.  Performing extraction`);
 				extractFileContents(fileName);
 			})
 			.on('error', (error) => {
-				console.log(error);
+				logger.info(error);
 			});	
 	}
 	else{
-		console.log(`The file already here.  Performing extraction`);
+		logger.info(`The file already here.  Performing extraction`);
 		extractFileContents(fileName);
 	}
 	
@@ -60,17 +71,18 @@ function extractFileContents(fileName){
 };
 
 exports.updateManifest = function(){
+	var logger = getLogger();
 	var options = platformOptionsBuilder.getDestiny2ManifestOptions();
-	request(options, (err, resp, body) => {
-		console.log("Ready to check update");
+	getRequest()(options, (err, resp, body) => {
+		logger.info("Ready to check update");
 		var jData = JSON.parse(body);
 		var fileInfo = getContentFileName(jData);
 		if(!fs.existsSync('./contents/' + fileInfo.fileName)){
-			console.log('Downloading from bungie.net ' + fileInfo.fileName);
+			logger.info('Downloading from bungie.net ' + fileInfo.fileName);
 			downloadContent(fileInfo.contentPath, fileInfo.fileName);
 		}
 		else{
-			console.log('Exists: ' + fileInfo.fileName);	
+			logger.info('Exists: ' + fileInfo.fileName);	
 		}
 		
 	});
