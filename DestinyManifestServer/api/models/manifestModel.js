@@ -3,7 +3,6 @@
 const path = require('path');
 const fs = require('fs');
 const request = require('request');
-const zlib = require('zlib');
 const unzipper = require('unzipper');
 const platformOptionsBuilder = require('../models/platformRequestOptionsBuilder');
 const contentsPathComponent = "./contents";
@@ -21,6 +20,10 @@ function getRequest(){
 	return request;
 };
 
+function getPlatformOptionsBuilder(){
+	return platformOptionsBuilder;
+};
+
 function getContentFileName(jData){
 	var currentContentPath = jData.Response.mobileWorldContentPaths.en;
 	var fileName = path.basename(currentContentPath);
@@ -34,7 +37,7 @@ function downloadContent(path, fileName){
 	var logger = getLogger();
 	if(!fs.existsSync('./' + fileName + '.zip')){
 		var file = fs.createWriteStream(fileName + '.zip');
-		let stream = request({
+		let stream = request.get({
 			/* Here you should specify the exact link to the file you are trying to download */
 			uri: 'http://www.bungie.net' + path,
 			headers: {
@@ -72,9 +75,10 @@ function extractFileContents(fileName){
 
 exports.updateManifest = function(){
 	var logger = getLogger();
-	var options = platformOptionsBuilder.getDestiny2ManifestOptions();
-	getRequest()(options, (err, resp, body) => {
+	var options = getPlatformOptionsBuilder().getDestiny2ManifestOptions();
+	getRequest().get(options, (err, resp, body) => {
 		logger.info("Ready to check update");
+		logger.info(body);
 		var jData = JSON.parse(body);
 		var fileInfo = getContentFileName(jData);
 		if(!fs.existsSync('./contents/' + fileInfo.fileName)){

@@ -31,7 +31,7 @@ function generatePostGameCarnageReportPromise(result, i){
 
 function getPostGameCarnageReportFromRequest(result, cacheType, instanceId, resolve){
 	var options = platformOptionsBuilder.getPostGameCarnageReportOptions(instanceId);
-	request(options, (err, resp, body) =>{
+	request.get(options, (err, resp, body) =>{
 		var value = JSON.parse(body);
 		cache.setCachedValue(cacheType, instanceId, value);
 		result.Response.platformAddendum.postGameCarnageReport[instanceId] = value;

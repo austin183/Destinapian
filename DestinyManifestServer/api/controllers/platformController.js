@@ -13,7 +13,7 @@ let defaultManifestAddendumFunction = function(result, resolve, reject){
 };
 
 function makeRequest(options, res, manifestAddendumFunction, cacheType, cacheAddress){
-	request(options, (err, resp, body) =>{
+	request.get(options, (err, resp, body) =>{
 	    res.header(respHeader);
 	    var result = JSON.parse(body);
 	    new Promise(function(resolve, reject){
