@@ -10,16 +10,18 @@ const stubbedFs = require('fs');
 const logger = require('../utilities/logger').logger;
 
 const standardError = {message: 'hi there'};
-const standardConentFileName = {
+const standardContent = {
     fileName: 'testFileName',
     contnetPath: 'testContnetPath'
 };
+const innerBody = { inner: 'body' };
 
 describe('manifestModel should getLatestManifestDatabase file from contents directory', function(){
     var loggerErrorSpy;
     var loggerInfoSpy;
     var platformStub = sinon.stub(stubbedPlatformOptionsBuilder, "getDestiny2ManifestOptions");
     var requestStub = sinon.stub(stubbedRequest, "get");
+    var flExistsSyncStub = sinon.stub(stubbedFs, "existsSync");
     beforeEach(function(){
         loggerErrorSpy = sinon.spy(logger, "error");
         loggerInfoSpy = sinon.spy(logger, "info");
@@ -33,14 +35,13 @@ describe('manifestModel should getLatestManifestDatabase file from contents dire
             return stubbedPlatformOptionsBuilder;
         });
         manifestModel.__set__("getContentFileName", function(jData){
-            return {
-                fileName: "fileName",
-                currentContentPath: "path"
-            };
+            expect(jData.inner).to.equal(innerBody.inner);
+            return standardContent;
         });
 
-        manifestModel.__set__("downloadContent", function(){
-            //ToDo expect or assert something here
+        manifestModel.__set__("downloadContent", function(contentPath, fileName){
+            expect(contentPath).to.equal(standardContent.contentPath);
+            expect(fileName).to.equal(standardContent.fileName);
             return;
         });
     });
@@ -54,15 +55,16 @@ describe('manifestModel should getLatestManifestDatabase file from contents dire
 
     it('should updateManifest with the from the internet', function(done){
         var options = { stubbed: 'options'};
-        var innerBody = { inner: 'body' };
         var requestBody = JSON.stringify(innerBody);
 
         platformStub.returns(options);
         requestStub.withArgs(options).yields(null, null, requestBody);
+        flExistsSyncStub.withArgs('./contents/' + standardContent.fileName).returns(false);
 
         manifestModel.updateManifest();
         expect(loggerInfoSpy.withArgs("Ready to check update").calledOnce).to.be.true;
-        //Todo - fille out expectations
+        expect(loggerInfoSpy.withArgs("Downloading from bungie.net " + standardContent.fileName).calledOnce).to.be.true;
+        //Todo - fill out expectations and refactor, to getLatestManifestDatabase test
         done();
     });
 });

@@ -78,7 +78,6 @@ exports.updateManifest = function(){
 	var options = getPlatformOptionsBuilder().getDestiny2ManifestOptions();
 	getRequest().get(options, (err, resp, body) => {
 		logger.info("Ready to check update");
-		logger.info(body);
 		var jData = JSON.parse(body);
 		var fileInfo = getContentFileName(jData);
 		if(!fs.existsSync('./contents/' + fileInfo.fileName)){
