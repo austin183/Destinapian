@@ -22,9 +22,16 @@ describe('manifestModel should getLatestManifestDatabase file from contents dire
     var platformStub = sinon.stub(stubbedPlatformOptionsBuilder, "getDestiny2ManifestOptions");
     var requestStub = sinon.stub(stubbedRequest, "get");
     var flExistsSyncStub = sinon.stub(stubbedFs, "existsSync");
+
+    var options = { stubbed: 'options'};
+    var requestBody = JSON.stringify(innerBody);
+    
     beforeEach(function(){
         loggerErrorSpy = sinon.spy(logger, "error");
         loggerInfoSpy = sinon.spy(logger, "info");
+        platformStub.returns(options);
+        requestStub.withArgs(options).yields(null, null, requestBody);
+    
         manifestModel.__set__("getLogger", function(){
 			return logger;
         });
@@ -51,20 +58,27 @@ describe('manifestModel should getLatestManifestDatabase file from contents dire
         requestStub.reset();
         loggerErrorSpy.restore();
         loggerInfoSpy.restore();
-	});
+    });
+    
+    
 
-    it('should updateManifest with the from the internet', function(done){
-        var options = { stubbed: 'options'};
-        var requestBody = JSON.stringify(innerBody);
-
-        platformStub.returns(options);
-        requestStub.withArgs(options).yields(null, null, requestBody);
+    it('should updateManifest with the from the internet when the file does not exist', function(done){
+        
         flExistsSyncStub.withArgs('./contents/' + standardContent.fileName).returns(false);
 
         manifestModel.updateManifest();
         expect(loggerInfoSpy.withArgs("Ready to check update").calledOnce).to.be.true;
         expect(loggerInfoSpy.withArgs("Downloading from bungie.net " + standardContent.fileName).calledOnce).to.be.true;
-        //Todo - fill out expectations and refactor, to getLatestManifestDatabase test
+
+        done();
+    });
+
+    it('should log when the contents file already exists', function(done){
+        flExistsSyncStub.withArgs('./contents/' + standardContent.fileName).returns(true);
+
+        manifestModel.updateManifest();
+        expect(loggerInfoSpy.withArgs("Ready to check update").calledOnce).to.be.true;
+        expect(loggerInfoSpy.withArgs("Exists: " + standardContent.fileName).calledOnce).to.be.true;
         done();
     });
 });
