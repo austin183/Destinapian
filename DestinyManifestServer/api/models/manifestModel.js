@@ -101,8 +101,6 @@ exports.getLatestManifestDatabase = function(){
 	var list = fs.readdirSync(contentsPathComponent + "/");
 	list.forEach(function(file){
 		var stats = fs.statSync(contentsPathComponent + "/" + file);
-		if(file.includes('.content')){
-		}
 		if((latestCreateTime == '' || latestCreateTime < stats.ctime) 
 			&& file.includes('.content')){
 			filePath = contentsPathComponent + "/" + file;

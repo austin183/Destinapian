@@ -16,12 +16,16 @@ const standardContent = {
 };
 const innerBody = { inner: 'body' };
 
+const contentsPathComponent = "./contents";
+
 describe('manifestModel should getLatestManifestDatabase file from contents directory', function(){
     var loggerErrorSpy;
     var loggerInfoSpy;
     var platformStub = sinon.stub(stubbedPlatformOptionsBuilder, "getDestiny2ManifestOptions");
     var requestStub = sinon.stub(stubbedRequest, "get");
-    var flExistsSyncStub = sinon.stub(stubbedFs, "existsSync");
+    var fsExistsSyncStub = sinon.stub(stubbedFs, "existsSync");
+    var fsReaddirSyncStub = sinon.stub(stubbedFs, "readdirSync");
+    var fsStatSyncStub = sinon.stub(stubbedFs, "statSync");
 
     var options = { stubbed: 'options'};
     var requestBody = JSON.stringify(innerBody);
@@ -64,7 +68,7 @@ describe('manifestModel should getLatestManifestDatabase file from contents dire
 
     it('should updateManifest with the from the internet when the file does not exist', function(done){
         
-        flExistsSyncStub.withArgs('./contents/' + standardContent.fileName).returns(false);
+        fsExistsSyncStub.withArgs('./contents/' + standardContent.fileName).returns(false);
 
         manifestModel.updateManifest();
         expect(loggerInfoSpy.withArgs("Ready to check update").calledOnce).to.be.true;
@@ -74,7 +78,7 @@ describe('manifestModel should getLatestManifestDatabase file from contents dire
     });
 
     it('should log when the contents file already exists', function(done){
-        flExistsSyncStub.withArgs('./contents/' + standardContent.fileName).returns(true);
+        fsExistsSyncStub.withArgs('./contents/' + standardContent.fileName).returns(true);
 
         manifestModel.updateManifest();
         expect(loggerInfoSpy.withArgs("Ready to check update").calledOnce).to.be.true;
@@ -91,7 +95,25 @@ describe('manifestModel should getLatestManifestDatabase file from contents dire
         done();
     });
 
-    if('should return file with the latest ctime from the content directory', function(){
-
+    it('should return file with the latest ctime from the content directory', function(){
+        var fileSet = {
+            'file1.content' : {
+                ctime: 123
+            },
+            'file2.other': {
+                ctime: 222
+            },
+            'file3.content': {
+                ctime: 140
+            }
+        };
+        var fileSetKeys = Object.keys(fileSet);
+        fsReaddirSyncStub.withArgs(contentsPathComponent + "/").returns(fileSetKeys);
+        fileSetKeys.forEach(function(key) {
+            fsStatSyncStub.withArgs(contentsPathComponent + "/" + key).returns(fileSet[key]);
+        });
+        var expectedFilePath = contentsPathComponent + '/file3.content';
+        var actualFilePath = manifestModel.getLatestManifestDatabase();
+        expect(expectedFilePath).to.equal(actualFilePath);
     });
 });
