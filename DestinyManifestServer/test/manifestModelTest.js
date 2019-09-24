@@ -81,4 +81,17 @@ describe('manifestModel should getLatestManifestDatabase file from contents dire
         expect(loggerInfoSpy.withArgs("Exists: " + standardContent.fileName).calledOnce).to.be.true;
         done();
     });
+
+    it('should log an error message if the request errors', function(done){
+        requestStub.withArgs(options).yields(standardError, null, null);
+        manifestModel.updateManifest();
+        expect(loggerErrorSpy.withArgs('Errored out requesting the manifest').calledOnce).to.be.true;
+        expect(loggerErrorSpy.withArgs(standardError).calledOnce).to.be.true;
+        expect(loggerInfoSpy.withArgs('Ready to check update').called).to.be.false;
+        done();
+    });
+
+    if('should return file with the latest ctime from the content directory', function(){
+
+    });
 });

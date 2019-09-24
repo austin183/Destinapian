@@ -77,6 +77,11 @@ exports.updateManifest = function(){
 	var logger = getLogger();
 	var options = getPlatformOptionsBuilder().getDestiny2ManifestOptions();
 	getRequest().get(options, (err, resp, body) => {
+		if(err){
+			logger.error('Errored out requesting the manifest');
+			logger.error(err);
+			return;
+		}
 		logger.info("Ready to check update");
 		var jData = JSON.parse(body);
 		var fileInfo = getContentFileName(jData);
@@ -87,7 +92,6 @@ exports.updateManifest = function(){
 		else{
 			logger.info('Exists: ' + fileInfo.fileName);	
 		}
-		
 	});
 };
 
