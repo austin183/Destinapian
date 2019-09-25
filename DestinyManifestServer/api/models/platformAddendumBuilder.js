@@ -3,6 +3,7 @@
 const platformOptionsBuilder = require('../models/platformRequestOptionsBuilder');
 const request = require('request');
 const cache = require('../models/cacheModel');
+const logger = require('../../utilities/logger');
 
 function generatePostGameCarnageReportPromises(result){
 	let postGamePromises = [];
@@ -45,7 +46,7 @@ exports.buildPostGameCarnageReport = function(result){
 		result.Response.platformAddendum.postGameCarnageReport = {};
 		let postGamePromises = generatePostGameCarnageReportPromises(result)
 		Promise.all(postGamePromises).then(function(){
-			resolve()
+			resolve();
 		});
 	});
 };
