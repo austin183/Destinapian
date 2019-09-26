@@ -68,13 +68,14 @@ describe('Platform Addendum Builder', function(){
 
     it('should build postGameCarnageReport from request', function(done){
         for(var i = 0; i < activityCount; i++){
-            var options = {option: 1};
+            var options = {option: i};
+            var optionsString = JSON.stringify(options);
             platformOptionsBuilderStub.withArgs(i).returns(options);
-            requestGetStub.withArgs(options).yields(null, null, options);
+            requestGetStub.withArgs(options).yields(null, null, optionsString);
         }
         platformAddendumBuilder.buildPostGameCarnageReport(result).then(function(){
             for(var i = 0; i < activityCount; i++){
-                expect(result.Response.platformAddendum.postGameCarnageReport[i].reportValue).to.equal(i);
+                expect(result.Response.platformAddendum.postGameCarnageReport[i].option).to.equal(i);
             }
             done();
         });
