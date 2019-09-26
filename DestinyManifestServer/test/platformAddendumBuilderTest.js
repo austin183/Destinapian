@@ -28,9 +28,13 @@ describe('Platform Addendum Builder', function(){
     var activityCount;
     var activities = [];
     var cacheStub;
-
+    var platformOptionsBuilderStub;
+    var requestGetStub;
+    
     beforeEach(function(){
         cacheStub = sinon.stub(stubbedCache, "getCachedValue");
+        platformOptionsBuilderStub = sinon.stub(stubbedPlatformOptionsBuilder, "getPostGameCarnageReportOptions");
+        requestGetStub = sinon.stub(stubbedRequest, "get");
         activityCount = 3;
         activities = buildActivities(activityCount);
         result = { 
@@ -43,6 +47,8 @@ describe('Platform Addendum Builder', function(){
 
     afterEach(function(){
         cacheStub.restore();
+        platformOptionsBuilderStub.restore();
+        requestGetStub.restore();
     });
     
 
@@ -51,6 +57,20 @@ describe('Platform Addendum Builder', function(){
             cacheStub.withArgs('PostGameCarnageReport', i).returns({
                 reportValue: i
             });
+        }
+        platformAddendumBuilder.buildPostGameCarnageReport(result).then(function(){
+            for(var i = 0; i < activityCount; i++){
+                expect(result.Response.platformAddendum.postGameCarnageReport[i].reportValue).to.equal(i);
+            }
+            done();
+        });
+    });
+
+    it('should build postGameCarnageReport from request', function(done){
+        for(var i = 0; i < activityCount; i++){
+            var options = {option: 1};
+            platformOptionsBuilderStub.withArgs(i).returns(options);
+            requestGetStub.withArgs(options).yields(null, null, options);
         }
         platformAddendumBuilder.buildPostGameCarnageReport(result).then(function(){
             for(var i = 0; i < activityCount; i++){

@@ -3,7 +3,7 @@
 const platformOptionsBuilder = require('../models/platformRequestOptionsBuilder');
 const request = require('request');
 const cache = require('../models/cacheModel');
-const logger = require('../../utilities/logger');
+const logger = require('../../utilities/logger').logger;
 
 function generatePostGameCarnageReportPromises(result){
 	let postGamePromises = [];
