@@ -21,18 +21,23 @@ const contentsPathComponent = "./contents";
 describe('manifestModel should getLatestManifestDatabase file from contents directory', function(){
     var loggerErrorSpy;
     var loggerInfoSpy;
-    var platformStub = sinon.stub(stubbedPlatformOptionsBuilder, "getDestiny2ManifestOptions");
-    var requestStub = sinon.stub(stubbedRequest, "get");
-    var fsExistsSyncStub = sinon.stub(stubbedFs, "existsSync");
-    var fsReaddirSyncStub = sinon.stub(stubbedFs, "readdirSync");
-    var fsStatSyncStub = sinon.stub(stubbedFs, "statSync");
+    var platformStub;
+    var requestStub;
+    var fsExistsSyncStub;
+    var fsReaddirSyncStub;
+    var fsStatSyncStub;
 
     var options = { stubbed: 'options'};
     var requestBody = JSON.stringify(innerBody);
     
     beforeEach(function(){
+        fsExistsSyncStub = sinon.stub(stubbedFs, "existsSync");
+        fsReaddirSyncStub = sinon.stub(stubbedFs, "readdirSync");
+        fsStatSyncStub = sinon.stub(stubbedFs, "statSync");
         loggerErrorSpy = sinon.spy(logger, "error");
         loggerInfoSpy = sinon.spy(logger, "info");
+        platformStub = sinon.stub(stubbedPlatformOptionsBuilder, "getDestiny2ManifestOptions");
+        requestStub = sinon.stub(stubbedRequest, "get");
         platformStub.returns(options);
         requestStub.withArgs(options).yields(null, null, requestBody);
     
@@ -58,8 +63,11 @@ describe('manifestModel should getLatestManifestDatabase file from contents dire
     });
 
     afterEach(function(){
-        platformStub.reset();
-        requestStub.reset();
+        fsExistsSyncStub.restore();
+        fsReaddirSyncStub.restore();
+        fsStatSyncStub.restore();
+        platformStub.restore();
+        requestStub.restore();
         loggerErrorSpy.restore();
         loggerInfoSpy.restore();
     });
