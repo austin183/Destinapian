@@ -10,6 +10,8 @@ const stubbedRequest = require('request');
 
 const platformAddendumBuilder = rewire('../api/models/platformAddendumBuilder');
 
+const standardError = { message: 'pabt hi there'};
+
 function buildActivities(activityCount){
     var activities = [];
     for(var i = 0; i < activityCount; i++){
@@ -96,14 +98,14 @@ describe('Platform Addendum Builder', function(){
                 requestGetStub.withArgs(options).yields(null, null, reportValue);
             }
             else{
-                requestGetStub.withArgs(options).yields({message: 'pabt hi there'}, null, null);
+                requestGetStub.withArgs(options).yields(standardError, null, null);
             }
             
         }
         platformAddendumBuilder.buildPostGameCarnageReport(result).then(function(){
             expect('Should not have reached this case because it should be rejected').to.equal('');
         }).catch(function(){
-            expect(loggerErrorSpy.withArgs('pabt hi there').calledOnce).to.be.true;
+            expect(loggerErrorSpy.withArgs(standardError.message).calledOnce).to.be.true;
             done();
         });
     });
