@@ -56,8 +56,6 @@ exports.buildPostGameCarnageReport = function(result){
 		Promise.all(postGamePromises).then(function(){
 			resolve();
 		}).catch(error => {
-			console.log('In catch block in implementation');
-			
 			getLogger().error(error.message);
 			reject();
 		});
