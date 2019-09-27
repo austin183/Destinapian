@@ -30,8 +30,10 @@ describe('Platform Addendum Builder', function(){
     var cacheStub;
     var platformOptionsBuilderStub;
     var requestGetStub;
+    var loggerErrorSpy;
     
     beforeEach(function(){
+        loggerErrorSpy = sinon.spy(logger, "error");
         cacheStub = sinon.stub(stubbedCache, "getCachedValue");
         platformOptionsBuilderStub = sinon.stub(stubbedPlatformOptionsBuilder, "getPostGameCarnageReportOptions");
         requestGetStub = sinon.stub(stubbedRequest, "get");
@@ -42,6 +44,9 @@ describe('Platform Addendum Builder', function(){
                 activities: activities
             }
         };
+        platformAddendumBuilder.__set__("getLogger", function(){
+			return logger;
+        });
 
     });
 
@@ -49,6 +54,7 @@ describe('Platform Addendum Builder', function(){
         cacheStub.restore();
         platformOptionsBuilderStub.restore();
         requestGetStub.restore();
+        loggerErrorSpy.restore();
     });
     
 
@@ -69,14 +75,35 @@ describe('Platform Addendum Builder', function(){
     it('should build postGameCarnageReport from request', function(done){
         for(var i = 0; i < activityCount; i++){
             var options = {option: i};
-            var optionsString = JSON.stringify(options);
+            var reportValue = JSON.stringify({reportValue: i});
             platformOptionsBuilderStub.withArgs(i).returns(options);
-            requestGetStub.withArgs(options).yields(null, null, optionsString);
+            requestGetStub.withArgs(options).yields(null, null, reportValue);
         }
         platformAddendumBuilder.buildPostGameCarnageReport(result).then(function(){
             for(var i = 0; i < activityCount; i++){
-                expect(result.Response.platformAddendum.postGameCarnageReport[i].option).to.equal(i);
+                expect(result.Response.platformAddendum.postGameCarnageReport[i].reportValue).to.equal(i);
             }
+            done();
+        });
+    });
+
+    it('should log error from postGameCarnageReport promises', function(done){
+        for(var i = 0; i < activityCount; i++){
+            var options = {option: i};
+            platformOptionsBuilderStub.withArgs(i).returns(options);
+            if(i != 2){
+                var reportValue = JSON.stringify({reportValue: i});
+                requestGetStub.withArgs(options).yields(null, null, reportValue);
+            }
+            else{
+                requestGetStub.withArgs(options).yields({message: 'pabt hi there'}, null, null);
+            }
+            
+        }
+        platformAddendumBuilder.buildPostGameCarnageReport(result).then(function(){
+            expect('Should not have reached this case because it should be rejected').to.equal('');
+        }).catch(function(){
+            expect(loggerErrorSpy.withArgs('pabt hi there').calledOnce).to.be.true;
             done();
         });
     });

@@ -3,7 +3,12 @@
 const platformOptionsBuilder = require('../models/platformRequestOptionsBuilder');
 const request = require('request');
 const cache = require('../models/cacheModel');
-const logger = require('../../utilities/logger').logger;
+
+const singleLogger = require('../../utilities/logger').logger;
+
+function getLogger(){
+	return singleLogger;
+};
 
 function generatePostGameCarnageReportPromises(result){
 	let postGamePromises = [];
@@ -26,13 +31,16 @@ function generatePostGameCarnageReportPromise(result, i){
 			resolve();
 			return;
 		}
-		getPostGameCarnageReportFromRequest(result, cacheType, instanceId, resolve);
+		getPostGameCarnageReportFromRequest(result, cacheType, instanceId, resolve, reject);
 	});
 }
 
-function getPostGameCarnageReportFromRequest(result, cacheType, instanceId, resolve){
+function getPostGameCarnageReportFromRequest(result, cacheType, instanceId, resolve, reject){
 	var options = platformOptionsBuilder.getPostGameCarnageReportOptions(instanceId);
 	request.get(options, (err, resp, body) =>{
+		if(err){
+			reject(err);
+		}
 		var value = JSON.parse(body);
 		cache.setCachedValue(cacheType, instanceId, value);
 		result.Response.platformAddendum.postGameCarnageReport[instanceId] = value;
@@ -47,6 +55,11 @@ exports.buildPostGameCarnageReport = function(result){
 		let postGamePromises = generatePostGameCarnageReportPromises(result)
 		Promise.all(postGamePromises).then(function(){
 			resolve();
+		}).catch(error => {
+			console.log('In catch block in implementation');
+			
+			getLogger().error(error.message);
+			reject();
 		});
 	});
 };
