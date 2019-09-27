@@ -10,11 +10,15 @@ let reqHeader = { 'X-API-KEY' : apiKeyHolder.apiKey };
 const respHeader = {'Access-Control-Allow-Origin': 'http://localhost:4200',
 'Content-Type':'application/json'};
 
+function getRequestHeader(){
+	return reqHeader;
+}
+
 exports.getDestiny2ProfileSearchOptions = function(membershipType, profileName){
 	var encProfileName = encodeURIComponent(profileName);
 	var options = {
 		url: platformUrl + '/Destiny2/SearchDestinyPlayer/' + membershipType + '/' + encProfileName + '/',
-		headers: reqHeader
+		headers: getRequestHeader()
 	}
 	return options;
 }
@@ -22,7 +26,7 @@ exports.getDestiny2ProfileSearchOptions = function(membershipType, profileName){
 exports.getDestiny2ProfileOptions = function(membershipType, membershipId, queryParams){
 	var options = {
 		url: platformUrl + '/Destiny2/' + membershipType + '/Profile/' + membershipId + '/',
-		headers: reqHeader,
+		headers: getRequestHeader(),
 		qs: queryParams
 	}
 	return options;
@@ -31,7 +35,7 @@ exports.getDestiny2ProfileOptions = function(membershipType, membershipId, query
 exports.getCharacterActivityHistoryOptions = function(membershipType, membershipId, characterId, queryParams){
 	var options = {
 		url: platformUrl + `Destiny2/` + membershipType + `/Account/` + membershipId + `/Character/` + characterId + `/Stats/Activities/`,
-		headers: reqHeader,
+		headers: getRequestHeader(),
 		qs: queryParams
 	}
 	return options;
@@ -40,7 +44,7 @@ exports.getCharacterActivityHistoryOptions = function(membershipType, membership
 exports.getCharacterInfoOptions = function(membershipType, membershipId, characterId, queryParams){
 	var options = {
 		url: platformUrl + `Destiny2/` + membershipType + `/Profile/` + membershipId + `/Character/` + characterId + `/`,
-		headers: reqHeader,
+		headers: getRequestHeader(),
 		qs: queryParams
 	}
 	return options;
@@ -49,7 +53,7 @@ exports.getCharacterInfoOptions = function(membershipType, membershipId, charact
 exports.getDestiny2ManifestOptions = function(){
 	var options = {
 		url: platformUrl + `Destiny2/Manifest/`,
-		headers: reqHeader
+		headers: getRequestHeader()
 	}
 	return options;
 };
@@ -57,7 +61,7 @@ exports.getDestiny2ManifestOptions = function(){
 exports.getPostGameCarnageReportOptions = function(activityId){
 	var options = {
 		url: platformUrl + 'Destiny2/Stats/PostGameCarnageReport/' + activityId + '/',
-		headers: reqHeader
+		headers: getRequestHeader()
 	};
 	return options;
 }
