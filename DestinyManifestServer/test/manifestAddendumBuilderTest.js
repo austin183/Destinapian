@@ -47,10 +47,29 @@ function buildTestInputsForActivities(){
 };
 
 describe('Manifest Addendum Builder', function() {
+	var mdbModelGetARaceStub;
+	var mdbModelGetAClassStub;
+	var mdbModelGetAGenderStub;
+	var mdbModelGetActivityDetailsStub;
+	beforeEach(function(){
+		mdbModelGetARaceStub = sinon.stub(manifestDatabaseModel, "getARace");
+		mdbModelGetAClassStub = sinon.stub(manifestDatabaseModel, "getAClass");;
+		mdbModelGetAGenderStub = sinon.stub(manifestDatabaseModel, "getAGender");;
+		mdbModelGetActivityDetailsStub = sinon.stub(manifestDatabaseModel, "getActivityDetails")
+	});
+
+	afterEach(function(){
+		mdbModelGetARaceStub.restore();
+		mdbModelGetAClassStub.restore();
+		mdbModelGetAGenderStub.restore();
+		mdbModelGetActivityDetailsStub.restore();
+	});
+
+
 	it('should call manifestDatabaseModel to build race info addendum', function(done) {
 		var raceInfo = {'race': 'something'};
 		var raceJson = JSON.stringify(raceInfo);
-		sinon.stub(manifestDatabaseModel, "getARace")
+		mdbModelGetARaceStub
 			.yields(null, [{id: 1, json:raceJson}]);
 		var result = buildInitialResult({raceHash: 'meh'});
 
@@ -63,8 +82,7 @@ describe('Manifest Addendum Builder', function() {
 	it('should call manifestDatabaseModel to build class info addendum', function(done){
 		var classInfo = {'class': 'something'};
 		var classJson = JSON.stringify(classInfo);
-		sinon.stub(manifestDatabaseModel, "getAClass")
-			.yields(null, [{id: 1, json: classJson}]);
+		mdbModelGetAClassStub.yields(null, [{id: 1, json: classJson}]);
 		var result = buildInitialResult({classHash: 'meh'});
 
 		manifestAddendumBuilder.buildClassInfoAddendum(result).then(function(){
@@ -76,8 +94,7 @@ describe('Manifest Addendum Builder', function() {
 	it('should call manifestDatabaseModel to build gender info addendum', function(done){
 		var genderInfo = {'gender': 'something'};
 		var genderJson = JSON.stringify(genderInfo);
-		sinon.stub(manifestDatabaseModel, "getAGender")
-			.yields(null, [{id: 1, json: genderJson}]);
+		mdbModelGetAGenderStub.yields(null, [{id: 1, json: genderJson}]);
 		var result = buildInitialResult({genderHash: 'meh'});
 
 		manifestAddendumBuilder.buildGenderInfoAddendum(result).then(function(){
@@ -88,8 +105,7 @@ describe('Manifest Addendum Builder', function() {
 
 	it('should call manifestDatabaseModel to build activities addendum', function(done){
 		var testInputs = buildTestInputsForActivities();
-		sinon.stub(manifestDatabaseModel, "getActivityDetails")
-			.yields(null, testInputs.returnedActivityRows);
+		mdbModelGetActivityDetailsStub.yields(null, testInputs.returnedActivityRows);
 
 		manifestAddendumBuilder.buildActivityInfoAddendum(testInputs.result).then(function(){
 			for(var i = 0, len = testInputs.activities.length; i < len; i++){

@@ -7,23 +7,26 @@ const sinon = require('sinon');
 const logger = require('../utilities/logger').logger;
 
 describe('Manifest Controller', function(){
-    var manifestDatabaseModelStub;
+    var mDbModelStubGetAllRaces;
+    var mDbModelStubGetARace;
     var loggerSpy;
     beforeEach(function(){
         loggerSpy = sinon.spy(logger, "error");
-        manifestDatabaseModelStub = sinon.stub(manifestDatabaseModel, "getAllRaces");
+        mDbModelStubGetAllRaces = sinon.stub(manifestDatabaseModel, "getAllRaces");
+        mDbModelStubGetARace = sinon.stub(manifestDatabaseModel, "getARace");
         manifestController.__set__("getLogger", function(){
             return logger;
         });
     });
 
     afterEach(function(){
-        manifestDatabaseModelStub.restore();
+        mDbModelStubGetAllRaces.restore();
+        mDbModelStubGetARace.restore();
         loggerSpy.restore();
     });
 
     it('should get all races', function(done){
-        manifestDatabaseModelStub.yields(null, [{something: 1}, {something: 2}]);
+        mDbModelStubGetAllRaces.yields(null, [{something: 1}, {something: 2}]);
         var req = {
             params: { raceId: 1 }
         };
@@ -39,7 +42,7 @@ describe('Manifest Controller', function(){
 
     it('should log error if getAllRaces returns error', function(done){
         var error = {message: 'error'};
-        manifestDatabaseModelStub.yields(error, null);
+        mDbModelStubGetAllRaces.yields(error, null);
         var req = {
             params: { raceId: 1 }
         };
@@ -51,5 +54,10 @@ describe('Manifest Controller', function(){
             }
         }
         manifestController.get_all_races(req, res);
+    });
+
+    it('should get A Race', function(done){
+
+        done();
     });
 });
