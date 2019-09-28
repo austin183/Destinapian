@@ -15,7 +15,7 @@ function getRequestHeader(){
 exports.getDestiny2ProfileSearchOptions = function(membershipType, profileName){
 	var encProfileName = encodeURIComponent(profileName);
 	var options = {
-		url: platformUrl + '/Destiny2/SearchDestinyPlayer/' + membershipType + '/' + encProfileName + '/',
+		url: platformUrl + 'Destiny2/SearchDestinyPlayer/' + membershipType + '/' + encProfileName + '/',
 		headers: getRequestHeader()
 	}
 	return options;
@@ -23,7 +23,7 @@ exports.getDestiny2ProfileSearchOptions = function(membershipType, profileName){
 
 exports.getDestiny2ProfileOptions = function(membershipType, membershipId, queryParams){
 	var options = {
-		url: platformUrl + '/Destiny2/' + membershipType + '/Profile/' + membershipId + '/',
+		url: platformUrl + 'Destiny2/' + membershipType + '/Profile/' + membershipId + '/',
 		headers: getRequestHeader(),
 		qs: queryParams
 	}
