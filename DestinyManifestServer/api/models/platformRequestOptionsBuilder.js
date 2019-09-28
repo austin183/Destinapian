@@ -7,8 +7,6 @@ let apiKeyHolder = JSON.parse(apiFile);
 const platformUrl = 'https://www.bungie.net/Platform/';
 
 let reqHeader = { 'X-API-KEY' : apiKeyHolder.apiKey };
-const respHeader = {'Access-Control-Allow-Origin': 'http://localhost:4200',
-'Content-Type':'application/json'};
 
 function getRequestHeader(){
 	return reqHeader;
