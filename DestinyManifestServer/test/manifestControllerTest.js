@@ -52,12 +52,39 @@ describe('Manifest Controller', function(){
                 expect(loggerSpy.withArgs(error.message).calledOnce).to.be.true;
                 done();
             }
-        }
+        };
         manifestController.get_all_races(req, res);
     });
 
     it('should get A Race', function(done){
+        var req = {
+            params: { raceId: 1 }
+        };
+        var res = {
+            json: function(rows){
+                console.log(rows);
+                expect(rows).to.not.be.null;
+                expect(rows.length).to.equal(2);
+                done();
+            }
+        };
+        mDbModelStubGetARace.withArgs(req.params.raceId).yields(null, [{something: 1}, {something: 2}]);
+        manifestController.get_a_race(req, res);
+    });
 
-        done();
+    it('should log error if getARace returns error', function(done){
+        var error = {message: 'error'};
+        var req = {
+            params: { raceId: 1 }
+        };
+        var res = {
+            json: function(err){
+                expect(err.message).to.equal(error.message);
+                expect(loggerSpy.withArgs(error.message).calledOnce).to.be.true;
+                done();
+            }
+        };
+        mDbModelStubGetARace.withArgs(req.params.raceId).yields(error, null);
+        manifestController.get_a_race(req, res);
     });
 });
