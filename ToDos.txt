@@ -4,6 +4,8 @@ Angular
 - enable debug flag (angular)
 - explore charting libaries (table of data to chart)
 - enable paging
+- disable 'submit' and 'getActivity' buttons when clicking and waiting for a response
+- progress bar
 
 NodeJs
 - Unit Test NodeJs server

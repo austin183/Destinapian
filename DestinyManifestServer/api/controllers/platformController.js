@@ -12,9 +12,17 @@ let defaultManifestAddendumFunction = function(result, resolve, reject){
 	resolve();
 };
 
+function getRequest(){
+	return request;
+}
+
+function getRespHeader(){
+	return respHeader;
+}
+
 function makeRequest(options, res, manifestAddendumFunction, cacheType, cacheAddress){
-	request.get(options, (err, resp, body) =>{
-	    res.header(respHeader);
+	getRequest().get(options, (err, resp, body) =>{
+	    res.header(getRespHeader());
 	    var result = JSON.parse(body);
 	    new Promise(function(resolve, reject){
 	    	manifestAddendumFunction(result, resolve, reject);
@@ -26,7 +34,7 @@ function makeRequest(options, res, manifestAddendumFunction, cacheType, cacheAdd
 };
 
 function respondWithCachedValue(res, cachedValue){
-	res.header(respHeader);
+	res.header(getRespHeader());
 	res.json(cachedValue);
 };
 
@@ -42,6 +50,7 @@ function tryToRespondFromCache(res, type, cacheAddress){
 exports.get_destiny2_profile_search = function(req, res){
 	var cacheAddress = req.params.membershipType + '~~' + req.params.profileName;
 	var type="profileSearch";
+	console.log('got here');
 	if(tryToRespondFromCache(res, type, cacheAddress)){
 		return;
 	}
