@@ -50,7 +50,6 @@ function tryToRespondFromCache(res, type, cacheAddress){
 exports.get_destiny2_profile_search = function(req, res){
 	var cacheAddress = req.params.membershipType + '~~' + req.params.profileName;
 	var type="profileSearch";
-	console.log('got here');
 	if(tryToRespondFromCache(res, type, cacheAddress)){
 		return;
 	}
