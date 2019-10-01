@@ -50,8 +50,14 @@ var performRespHeaderTest = function(respHeader){
     expect(respHeader.header).to.equal(testRespHeader.header);
 };
 
+function performRespCachedJsonTest(done) {
+    return function (result) {
+        expect(result.value).to.equal(testCachedValue.value);
+        done();
+    };
+};
 
-describe('Platform Controller all the way to cache and request objects', function(){
+describe('Platform Controller ', function(){
     var loggerErrorSpy;
     var requestStub;
     var cacheStub_getCachedValue;
@@ -84,69 +90,78 @@ describe('Platform Controller all the way to cache and request objects', functio
         platformOptionsBuilderStub_getDestiny2ProfileSearchOptions.restore();
     });
 
-    it('should get_destiny2_profile_search from cache with right parameters', function(done){
-        var res = {
-            header: performRespHeaderTest,
-            json: function(result){
-                expect(result.value).to.equal(testCachedValue.value);
-                done();
-            } 
-        };
-        cacheStub_getCachedValue.withArgs('profileSearch', profileReq.params.membershipType + '~~' + profileReq.params.profileName)
-            .returns(testCachedValue);
+    describe('get_destiny2_profile_search', function(){
+        var searchTerm = 'profileSearch';
+        var searchQuery = profileReq.params.membershipType + '~~' + profileReq.params.profileName;
+        it('should get_destiny2_profile_search from cache with right parameters', function(done){
+            var res = {
+                header: performRespHeaderTest,
+                json: performRespCachedJsonTest(done) 
+            };
+            cacheStub_getCachedValue.withArgs(searchTerm, searchQuery).returns(testCachedValue);
+            
+            platformController.get_destiny2_profile_search(profileReq, res);
+        });
+    
+        it('should get_destiny2_profile_search from request if not in cache', function(done){
+            var res = {
+                header: performRespHeaderTest,
+                json: function(result){
+                    expect(result.value).to.equal(testRequest.value);
+                    expect(cacheSpy_setCachedValue.withArgs(searchTerm, searchQuery).calledOnce).to.be.true;
+                    done();
+                }
+            };
+            cacheStub_getCachedValue.withArgs(searchTerm, searchQuery).returns('');
+            platformOptionsBuilderStub_getDestiny2ProfileSearchOptions
+                .withArgs(profileReq.params.membershipType, profileReq.params.profileName)
+                .returns(testOptions);
+            requestStub.withArgs(testOptions).yields(null, null, JSON.stringify(testRequest));
+            platformController.get_destiny2_profile_search(profileReq, res);
+        });
+    
+        it('should log error if get_destiny2_profile_search if request errored out', function(done){
+            var res = {
+                header: performRespHeaderTest,
+                json: function(result){
+                    expect(result.value).to.equal(testRequest.value);
+                    expect(cacheSpy_setCachedValue.withArgs(searchTerm, searchQuery).calledOnce).to.be.true;
+                    done();
+                }
+            };
+            cacheStub_getCachedValue.withArgs(searchTerm, searchQuery)
+                .returns('');
+            platformOptionsBuilderStub_getDestiny2ProfileSearchOptions
+                .withArgs(profileReq.params.membershipType, profileReq.params.profileName)
+                .returns(testOptions);
+            requestStub.withArgs(testOptions).yields(standardError, null, null);
+            platformController.get_destiny2_profile_search(profileReq, res);
+            expect(loggerErrorSpy.withArgs(standardError.message).calledOnce).to.be.true;
+            done();
+        });
+    });
+
+    describe('get_character_activity_history', function(){
+        var searchTerm = 'activityHistory';
+        var searchQuery = characterActivityHistoryReq.params.membershipType + '~~' + characterActivityHistoryReq.params.membershipId + '~~' + characterActivityHistoryReq.params.characterId + '~~' + objectHash(characterActivityHistoryReq.query);
+        it('should get_character_activity_history from cache with right parameters', function(done){
+            var res = {
+                header: performRespHeaderTest,
+                json: performRespCachedJsonTest(done)
+            };
+            cacheStub_getCachedValue.withArgs(searchTerm, searchQuery)
+                .returns(testCachedValue);
+            
+            platformController.get_character_activity_history(characterActivityHistoryReq, res);
+        });
+
+
         
-        platformController.get_destiny2_profile_search(profileReq, res);
-    });
 
-    it('should get_destiny2_profile_search from request if not in cache', function(done){
-        var res = {
-            header: performRespHeaderTest,
-            json: function(result){
-                expect(result.value).to.equal(testRequest.value);
-                expect(cacheSpy_setCachedValue.withArgs('profileSearch', profileReq.params.membershipType + '~~' + profileReq.params.profileName, testRequest).calledOnce).to.be.true;
-                done();
-            }
-        };
-        cacheStub_getCachedValue.withArgs('profileSearch', profileReq.params.membershipType + '~~' + profileReq.params.profileName)
-            .returns('');
-        platformOptionsBuilderStub_getDestiny2ProfileSearchOptions
-            .withArgs(profileReq.params.membershipType, profileReq.params.profileName)
-            .returns(testOptions);
-        requestStub.withArgs(testOptions).yields(null, null, JSON.stringify(testRequest));
-        platformController.get_destiny2_profile_search(profileReq, res);
-    });
 
-    it('should log error if get_destiny2_profile_search if request errored out', function(done){
-        var res = {
-            header: performRespHeaderTest,
-            json: function(result){
-                expect(result.value).to.equal(testRequest.value);
-                expect(cacheSpy_setCachedValue.withArgs('profileSearch', profileReq.params.membershipType + '~~' + profileReq.params.profileName, testRequest).calledOnce).to.be.true;
-                done();
-            }
-        };
-        cacheStub_getCachedValue.withArgs('profileSearch', profileReq.params.membershipType + '~~' + profileReq.params.profileName)
-            .returns('');
-        platformOptionsBuilderStub_getDestiny2ProfileSearchOptions
-            .withArgs(profileReq.params.membershipType, profileReq.params.profileName)
-            .returns(testOptions);
-        requestStub.withArgs(testOptions).yields(standardError, null, null);
-        platformController.get_destiny2_profile_search(profileReq, res);
-        expect(loggerErrorSpy.withArgs(standardError.message).calledOnce).to.be.true;
-        done();
-    });
 
-    it('should get_character_activity_history from cache with right parameters', function(done){
-        var res = {
-            header: performRespHeaderTest,
-            json: function(result){
-                expect(result.value).to.equal(testCachedValue.value);
-                done();
-            } 
-        };
-        cacheStub_getCachedValue.withArgs('activityHistory', characterActivityHistoryReq.params.membershipType + '~~' + characterActivityHistoryReq.params.membershipId + '~~' + characterActivityHistoryReq.params.characterId + '~~' + objectHash(characterActivityHistoryReq.query))
-            .returns(testCachedValue);
-        
-        platformController.get_character_activity_history(characterActivityHistoryReq, res);
+
+
+
     });
 });
