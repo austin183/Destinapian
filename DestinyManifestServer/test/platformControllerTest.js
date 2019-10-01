@@ -1,5 +1,6 @@
 'use strict';
 
+const objectHash = require('object-hash');
 const rewire = require('rewire');
 const expect = require('chai').expect;
 const sinon = require('sinon');
@@ -30,6 +31,17 @@ const profileReq = {
     }
 };
 
+const characterActivityHistoryReq = {
+    params: {
+        membershipType: 1,
+        membershipId: 123,
+        characterId: 456
+    },
+    query:{
+        something: 'something'
+    }
+};
+
 const standardError = {
     message: 'error'
 };
@@ -39,7 +51,7 @@ var performRespHeaderTest = function(respHeader){
 };
 
 
-describe('Platform Controller', function(){
+describe('Platform Controller all the way to cache and request objects', function(){
     var loggerErrorSpy;
     var requestStub;
     var cacheStub_getCachedValue;
@@ -122,5 +134,19 @@ describe('Platform Controller', function(){
         platformController.get_destiny2_profile_search(profileReq, res);
         expect(loggerErrorSpy.withArgs(standardError.message).calledOnce).to.be.true;
         done();
+    });
+
+    it('should get_character_activity_history from cache with right parameters', function(done){
+        var res = {
+            header: performRespHeaderTest,
+            json: function(result){
+                expect(result.value).to.equal(testCachedValue.value);
+                done();
+            } 
+        };
+        cacheStub_getCachedValue.withArgs('activityHistory', characterActivityHistoryReq.params.membershipType + '~~' + characterActivityHistoryReq.params.membershipId + '~~' + characterActivityHistoryReq.params.characterId + '~~' + objectHash(characterActivityHistoryReq.query))
+            .returns(testCachedValue);
+        
+        platformController.get_character_activity_history(characterActivityHistoryReq, res);
     });
 });
