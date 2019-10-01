@@ -32,7 +32,7 @@ function makeRequest(options, res, manifestAddendumFunction, cacheType, cacheAdd
 			return;
 		}
 	    res.header(getRespHeader());
-	    var result = JSON.parse(body);
+		var result = JSON.parse(body);
 	    new Promise(function(resolve, reject){
 	    	manifestAddendumFunction(result, resolve, reject);
 	    }).then(function(){
@@ -67,7 +67,7 @@ exports.get_destiny2_profile_search = function(req, res){
 };
 
 exports.get_destiny2_profile = function(req, res){
-	var cacheAddress = req.params.membershipType + '~~' + req.params.profileName + '~~' + objectHash(req.query);
+	var cacheAddress = req.params.membershipType + '~~' + req.params.membershipId + '~~' + objectHash(req.query);
 	var type = 'profile';
 	if(tryToRespondFromCache(res, type, cacheAddress)){
 		return;
