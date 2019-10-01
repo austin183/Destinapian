@@ -23,13 +23,30 @@ const testRequest = {
     'value': 1
 };
 
+const profileReq = {
+    params: {
+        membershipType: 1,
+        profileName: 'name'
+    }
+};
+
+const standardError = {
+    message: 'error'
+};
+
+var performRespHeaderTest = function(respHeader){
+    expect(respHeader.header).to.equal(testRespHeader.header);
+};
+
 
 describe('Platform Controller', function(){
+    var loggerErrorSpy;
     var requestStub;
     var cacheStub_getCachedValue;
     var cacheSpy_setCachedValue;
     var platformOptionsBuilderStub_getDestiny2ProfileSearchOptions;
     beforeEach(function(){
+        loggerErrorSpy = sinon.spy(logger, "error");
         requestStub = sinon.stub(stubbedRequest, "get");
         cacheStub_getCachedValue = sinon.stub(stubbedCache, "getCachedValue");
         cacheSpy_setCachedValue = sinon.spy(stubbedCache, "setCachedValue");
@@ -41,9 +58,14 @@ describe('Platform Controller', function(){
         platformController.__set__("getRespHeader", function(){
             return testRespHeader;
         });
+
+        platformController.__set__("getLogger", function(){
+			return logger;
+        });
     });
 
     afterEach(function(){
+        loggerErrorSpy.restore();
         requestStub.restore();
         cacheStub_getCachedValue.restore();
         cacheSpy_setCachedValue.restore();
@@ -51,50 +73,54 @@ describe('Platform Controller', function(){
     });
 
     it('should get_destiny2_profile_search from cache with right parameters', function(done){
-        var req = {
-            params: {
-                membershipType: 1,
-                profileName: 'name'
-            }
-        };
         var res = {
-            header: function(respHeader){
-                expect(respHeader.header).to.equal(testRespHeader.header);
-            },
+            header: performRespHeaderTest,
             json: function(result){
                 expect(result.value).to.equal(testCachedValue.value);
                 done();
-            }
+            } 
         };
-        cacheStub_getCachedValue.withArgs('profileSearch', req.params.membershipType + '~~' + req.params.profileName)
+        cacheStub_getCachedValue.withArgs('profileSearch', profileReq.params.membershipType + '~~' + profileReq.params.profileName)
             .returns(testCachedValue);
         
-        platformController.get_destiny2_profile_search(req, res);
+        platformController.get_destiny2_profile_search(profileReq, res);
     });
 
     it('should get_destiny2_profile_search from request if not in cache', function(done){
-        var req = {
-            params: {
-                membershipType: 1,
-                profileName: 'name'
-            }
-        };
         var res = {
-            header: function(respHeader){
-                expect(respHeader.header).to.equal(testRespHeader.header);
-            },
+            header: performRespHeaderTest,
             json: function(result){
                 expect(result.value).to.equal(testRequest.value);
-                expect(cacheSpy_setCachedValue.withArgs('profileSearch', req.params.membershipType + '~~' + req.params.profileName, testRequest).calledOnce).to.be.true;
+                expect(cacheSpy_setCachedValue.withArgs('profileSearch', profileReq.params.membershipType + '~~' + profileReq.params.profileName, testRequest).calledOnce).to.be.true;
                 done();
             }
         };
-        cacheStub_getCachedValue.withArgs('profileSearch', req.params.membershipType + '~~' + req.params.profileName)
+        cacheStub_getCachedValue.withArgs('profileSearch', profileReq.params.membershipType + '~~' + profileReq.params.profileName)
             .returns('');
         platformOptionsBuilderStub_getDestiny2ProfileSearchOptions
-            .withArgs(req.params.membershipType, req.params.profileName)
+            .withArgs(profileReq.params.membershipType, profileReq.params.profileName)
             .returns(testOptions);
         requestStub.withArgs(testOptions).yields(null, null, JSON.stringify(testRequest));
-        platformController.get_destiny2_profile_search(req, res);
+        platformController.get_destiny2_profile_search(profileReq, res);
+    });
+
+    it('should log error if get_destiny2_profile_search if request errored out', function(done){
+        var res = {
+            header: performRespHeaderTest,
+            json: function(result){
+                expect(result.value).to.equal(testRequest.value);
+                expect(cacheSpy_setCachedValue.withArgs('profileSearch', profileReq.params.membershipType + '~~' + profileReq.params.profileName, testRequest).calledOnce).to.be.true;
+                done();
+            }
+        };
+        cacheStub_getCachedValue.withArgs('profileSearch', profileReq.params.membershipType + '~~' + profileReq.params.profileName)
+            .returns('');
+        platformOptionsBuilderStub_getDestiny2ProfileSearchOptions
+            .withArgs(profileReq.params.membershipType, profileReq.params.profileName)
+            .returns(testOptions);
+        requestStub.withArgs(testOptions).yields(standardError, null, null);
+        platformController.get_destiny2_profile_search(profileReq, res);
+        expect(loggerErrorSpy.withArgs(standardError.message).calledOnce).to.be.true;
+        done();
     });
 });

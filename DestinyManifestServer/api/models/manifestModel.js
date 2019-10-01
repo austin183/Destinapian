@@ -84,6 +84,10 @@ exports.updateManifest = function(){
 		}
 		logger.info("Ready to check update");
 		var jData = JSON.parse(body);
+		if(jData.ErrorStatus && jData.ErrorStatus == 'SystemDisabled'){
+			logger.info('Could not get new manifest');
+			return;
+		}
 		var fileInfo = getContentFileName(jData);
 		if(!fs.existsSync('./contents/' + fileInfo.fileName)){
 			logger.info('Downloading from bungie.net ' + fileInfo.fileName);

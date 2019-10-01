@@ -6,10 +6,15 @@ const platformAddendumBuilder = require('../models/platformAddendumBuilder');
 const objectHash = require('object-hash');
 const cache = require('../models/cacheModel');
 const request = require('request');
+const logger = require('../../utilities/logger').logger;
 const respHeader = {'Access-Control-Allow-Origin': 'http://localhost:4200',
 'Content-Type':'application/json'};
 let defaultManifestAddendumFunction = function(result, resolve, reject){ 
 	resolve();
+};
+
+function getLogger(){
+	return logger;
 };
 
 function getRequest(){
@@ -22,6 +27,10 @@ function getRespHeader(){
 
 function makeRequest(options, res, manifestAddendumFunction, cacheType, cacheAddress){
 	getRequest().get(options, (err, resp, body) =>{
+		if(err){
+			getLogger().error(err.message);
+			return;
+		}
 	    res.header(getRespHeader());
 	    var result = JSON.parse(body);
 	    new Promise(function(resolve, reject){

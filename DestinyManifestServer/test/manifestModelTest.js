@@ -71,9 +71,14 @@ describe('manifestModel should getLatestManifestDatabase file from contents dire
         loggerErrorSpy.restore();
         loggerInfoSpy.restore();
     });
-    
-    
 
+    it('should log when updateManifest encounters System Disabled status', function(done){
+        requestStub.withArgs(options).yields(standardError, null, null);
+        manifestModel.updateManifest();
+        expect(loggerInfoSpy.withArgs('Could not get new manifest').called).to.be.false;
+        done();
+    });
+    
     it('should updateManifest with the from the internet when the file does not exist', function(done){
         
         fsExistsSyncStub.withArgs('./contents/' + standardContent.fileName).returns(false);
