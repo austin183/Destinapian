@@ -7,6 +7,7 @@ export class DestinyEnums{
 		return {
 			"Xbox" : 1,
 			"Psn" : 2,
+			"Steam": 3,
 			"Blizzard" : 4,
 			"Demon" : 10,
 			"BungieNext" : 254,

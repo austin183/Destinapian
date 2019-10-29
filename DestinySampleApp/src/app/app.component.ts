@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { DestinyService } from './destiny.service';
-import {DestinyEnums} from './DestinyEnums';
-import {DestinyResponseHelper} from './DestinyResponseHelper';
+import { DestinyService } from './CoreModule/destiny.service';
+import {DestinyEnums} from './CoreModule/DestinyEnums';
+import {DestinyResponseHelper} from './CoreModule/DestinyResponseHelper';
 import { FormControl, FormGroup, FormBuilder } from '@angular/forms';
 function translateHash(hash){
   return hash>>0;
@@ -51,8 +51,8 @@ export class AppComponent implements OnInit {
   
   createForm(){
     this.getInfoForm = this.fb.group({
-      profileName: ['Naught#11555'],
-      membershipTypeDropDown: ['4'],
+      profileName: ['austin183'],
+      membershipTypeDropDown: ['3'],
       characterDropDown: [''],
       gameModeDropDown: [this.gameModes.AllPvP]
     });

@@ -8,5 +8,4 @@ Angular
 - progress bar
 
 NodeJs
-- Unit Test NodeJs server
 - enable debug flag (nodejs)
